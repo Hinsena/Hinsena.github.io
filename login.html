@@ -59,32 +59,13 @@
       background: linear-gradient(90deg, #9CCC65, #6AA034);
     }
   </style>
-  <script>
-    let startTime;
-    function getParams() { return Object.fromEntries(new URLSearchParams(window.location.search).entries()); }
-    window.onload = () => {
-      startTime = Date.now();
-      const params = getParams();
-      document.getElementById('username').value = params.username || '';
-    };
-    function submitForm(e) {
-      e.preventDefault();
-      const params = getParams();
-      const u = document.getElementById('username').value;
-      const pw = document.getElementById('password').value;
-      if (pw !== params.password) { alert('Passwort stimmt nicht.'); return; }
-      const lt = ((Date.now() - startTime) / 1000).toFixed(2);
-      const target = `https://webseite20.github.io/index.html?username=${encodeURIComponent(u)}&password=${encodeURIComponent(pw)}&regtime=${params.regtime}&logintime=${lt}&startStep=5`;
-      window.location.href = target;
-    }
-  </script>
 </head>
 <body>
   <div class="card">
     <div class="header">
       <h2>Krankenkasse</h2>
     </div>
-    <form onsubmit="submitForm(event)">
+    <form id="loginForm">
       <label for="username">Mitgliedsnummer
         <input type="text" id="username" required>
       </label>
@@ -94,5 +75,26 @@
       <button type="submit" class="btn-secondary">Anmelden</button>
     </form>
   </div>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      const startTime = Date.now();
+      const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+      const usernameField = document.getElementById('username');
+      usernameField.value = params.username || '';
+
+      document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const u = usernameField.value;
+        const pw = document.getElementById('password').value;
+        if (pw !== params.password) {
+          alert('Passwort stimmt nicht.');
+          return;
+        }
+        const lt = ((Date.now() - startTime) / 1000).toFixed(2);
+        const target = `https://webseite20.github.io/index.html?username=${encodeURIComponent(u)}&password=${encodeURIComponent(pw)}&regtime=${params.regtime}&logintime=${lt}&startStep=5`;
+        window.location.href = target;
+      });
+    });
+  </script>
 </body>
 </html>
